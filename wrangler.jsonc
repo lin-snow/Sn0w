@@ -4,6 +4,6 @@
   "name": "sn0w",
   "compatibility_date": "2026-05-27",
   "assets": {
-    "directory": "./dist"
-  }
+    "directory": "./dist",
+  },
 }

@@ -10,7 +10,7 @@ export const intro = {
   ],
   // Shown as the blue marginalia note.
   status:
-    "Currently interning at LangGenius — open to open-source collaborations.",
+    "Recently wrapped up at LangGenius (Dify) — open to new roles and open-source collaborations.",
   github: "https://github.com/lin-snow",
   message: "mailto:l1nsn0w@qq.com",
 } as const;
@@ -23,7 +23,7 @@ export type Entry = {
 };
 
 export const experience: Entry[] = [
-  { label: "Backend Software Engineer, LangGenius", date: "2025–Present" },
+  { label: "Backend Software Engineer, LangGenius", date: "2025–Oct 2026" },
   { label: "B.Eng. Software Engineering, GDUT", date: "in progress" },
 ];
 
