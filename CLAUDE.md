@@ -4,47 +4,127 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-`Sn0w` is a single-page personal homepage (L1nSn0w's). It is a static React + Vite + Tailwind v4 site with one route — there is no router, no backend, no tests. `src/App.tsx` is the page shell; it composes presentational components from `src/components/` driven by data in `src/content.ts`.
+`Sn0w` is L1nSn0w's personal homepage and blog merged into one static site. It is
+an Astro site with one layout, a small set of pages, and a Markdown content
+collection. There is no router, backend, database, or client framework. The
+visual base comes from [PlainBlog](https://github.com/wutongyuonce/PlainBlog)
+(MIT), with the original homepage content and the posts from the former blog
+repository folded in.
 
 ## Commands
 
-Package manager is **bun** (see `bun.lock`).
+Package manager is **bun**.
 
 ```bash
 bun install
-bun run dev          # vite dev server
-bun run build        # tsc -b && vite build  → dist/
-bun run lint         # eslint .
-bun run lint:fix     # eslint . --fix
+bun run dev          # astro dev
+bun run check        # astro check (TypeScript + Astro diagnostics)
+bun run build        # astro build → dist/
+bun run preview      # serve dist/
+bun run test         # node --test tests/*.test.mjs (publication rules)
 bun run format       # prettier --write .
 bun run format:check # prettier --check .
-bun run preview      # serve the built dist/
 ```
+
+Production builds set `SITE_URL=https://sn0w.fyi/`; without it, canonical and
+RSS absolute URLs are intentionally omitted.
 
 ## Architecture
 
-The codebase is deliberately tiny and split along one axis: **content vs. layout.**
+- **`src/pages/`** — route entry points. `index.astro` is the home page: a flat
+  full-column layout (`.home`, no card) with an `I'm <name>` 20px `h1` whose
+  28px avatar slides in on hover, the English `HomeIntro.astro` block (inline
+  brand icons), the coffee-toned `site.coffeeChat` CTA, the Experience and
+  Projects rows from `site.work` / `site.projects`, and a footer with icon-only
+  social links (CSS tooltip from `data-tip` on hover/focus) plus
+  `site.elsewhere` — no post list;
+  `blog/index.astro` is the
+  article list (`/blog/`) grouped by year, reachable from the breadcrumb menu;
+  `about.astro` and `projects.astro` render Markdown pages;
+  `blog/[slug].astro` renders one post; `rss.xml.ts` builds the full-text feed;
+  `404.astro` is the not-found page.
+- **`src/layouts/Base.astro`** — the single HTML shell: theme bootstrap script,
+  metadata/canonical/OG tags, breadcrumb, theme toggle, and the slot. All pages
+  go through it.
+- **`src/components/Breadcrumb.astro`** — home link plus the native
+  `<details>` site menu driven by `site.nav`, and the `Home / Blog / title`
+  article path.
+- **`src/components/HomeIntro.astro`** — the home page intro paragraphs, in
+  English, with inline `<Icon>` marks and links, plus the inline `meme.gif`
+  thumb that reveals a rounded preview on hover/focus; wrap icon + word in
+  `.keep` so an icon never ends a line, and keep each `<p>` under
+  `<!-- prettier-ignore -->` so reformatting cannot turn a line break into a
+  stray space before punctuation.
+- **`src/components/HomeRow.astro`** — one Experience/Projects row: optional left icon,
+  `name ~ role`, optional right-side stack icons and meta; renders a link when
+  `href` exists, otherwise a plain row. On hover/focus the URL label replaces
+  the stack icons.
+- **`src/components/Icon.astro`** — renders a mark from `social-icons.mjs` or
+  `brand-icons.mjs`: vector paths as inline `<svg>` in the mark's brand `color`
+  (or `currentColor` with `mono`), `src` entries as `<img>` (or, with `mono`,
+  a `mask` span tinted by `currentColor`).
+- **`src/components/Lightbox.astro`** — article image viewer rendered only by
+  `blog/[slug].astro`; wraps `.prose img` in a button at runtime and opens the
+  full-size image in a native `<dialog>` (Esc, backdrop, close button).
+- **`src/config.ts`** — site identity, the `coffeeChat` CTA label/link,
+  navigation, social links, "Elsewhere" links, and the `work` / `projects` rows
+  rendered on the home page.
+- **`src/lib/brand-icons.mjs`** — Simple Icons (CC0), Heroicons (MIT), FormKit
+  icons (MIT), Boxicons (CC BY 4.0, the coffee-chat cup) and Radix Icons (MIT,
+  the memo link's `paper` mark) path data for the stack/subject marks (viewBoxes
+  cropped to each glyph), plus `src` entries pointing at the official logos in
+  `public/icons/` (`dify.svg`, `gdut.png`, `ech0.svg`, `dox.png`, `kemate.png`,
+  `sqlite.svg`, `kubernetes.svg`, `docker.svg`).
+- **`src/content/posts/<slug>/index.md`** — one directory per post; the
+  directory name is the slug. Frontmatter: required `title` and quoted
+  `YYYY-MM-DD` `date`, optional `draft: true`. Images live beside `index.md` and
+  are referenced as `./file.webp`.
+- **`src/content/pages/`** — `about.md` and `projects.md`, imported as
+  components by their pages. The home intro is `HomeIntro.astro`, not Markdown.
+- **`src/content.config.ts` / `src/lib/publication.mjs`** — the single authority
+  for date validation, slug validation, draft exclusion, deduplication, and
+  sorting. Pages call `selectPublished()`; never re-implement these rules.
+- **`src/lib/paths.ts`** — prefixes site-root paths with Astro's `BASE_URL`
+  (currently `/`; kept so a sub-path deployment would still work).
+- **`src/styles/global.css`** — the whole design system: CSS custom properties
+  for the dark/light palette, typography, the home profile block, breadcrumbs,
+  post lists, prose, code/table/image styling, the `.gallery` grid, and the
+  theme toggle.
+- **`astro.config.mjs`** — Satteri Markdown pipeline. Enables container
+  directives and turns `:::gallery` into a `.gallery` wrapper while keeping its
+  image nodes in the AST, so Astro hashes, sizes, and lazy-loads them.
+- **`public/`** — favicons, avatar, official brand logos in `public/icons/`,
+  the hover meme (`meme.gif`), `_headers`, and `robots.txt`.
 
-- **`src/content.ts`** — all page copy and data: `intro`, `experience`, `projects`, `artifacts`, `links`. Each export is strongly typed (`Entry`, `Project`, `Link`). Edit text, dates, projects, and links here without touching layout. Comments in this file document field semantics (e.g. a `Project` with no `href` is closed-source/unlinked; `badge` is short sticker text; `color` picks a marker accent).
+## Content workflow
 
-- **`src/App.tsx`** — just the page shell: outer layout plus the section ordering (`<Intro />`, `<Experience />`, `<Projects />`, …). No visual primitives live here anymore.
-
-- **`src/components/`** — the visual layer, grouped by role. This is where the "desk / annotated notebook" aesthetic lives:
-  - **`desk.tsx`** — reusable presentational primitives (`Sticker`, `DateTag`, `Stamp`, `HandUnderline`, `MarkerHighlight`, `Pushpin`, `DraggableSticker`, `LinkDoodle`, `SectionLabel`, etc.). Internal-only helpers (`MarkerFrame`, `Annotation`, `Spark`, the `MARKER` map) are not exported.
-  - **`sections.tsx`** — the four page sections (`Experience`, `Projects`, `Artifacts`, `Elsewhere`) plus list-row helpers (`RowShell`, `Label`, `PlainMeta`); maps over `content.ts` data using `desk` primitives.
-  - **`intro.tsx`** — the `Intro` block (header monogram, draggable avatar, intro paragraphs, pinned status note) and the phrase-level `ACCENTS` / `decorateIntro` logic.
-
-- **`src/index.css`** — the design system, defined through Tailwind v4's `@theme` and `@layer` blocks rather than a JS config. Defines the named font roles (`--font-sans` body, `--font-mono` labels/stickies, `--font-hand` marker scribbles, `--font-script` corner monogram), the warm-paper color palette (`--color-paper`, `--color-ink`, marker accents, etc.), and component classes like `.dotted`, `.sticky-note`, `.stamp`.
-
-When adding content, prefer extending the typed arrays in `content.ts`; reach for `src/components/` (and `index.css`) only for genuinely new visual elements — put reusable primitives in `desk.tsx` and section/page composition in `sections.tsx`.
+- Add a post as `src/content/posts/my-post/index.md`; it appears in the
+  `/blog/` list and gets `/blog/my-post/` without editing routes.
+- Put images in the same directory and reference them as `./file.webp`.
+  Consecutive images can be wrapped in `:::gallery` for a grid. Every article
+  image opens the lightbox on click; images inside links are left alone.
+- Prefer plain text over inline code and bold for emphasis; reserve inline code
+  for literal commands, paths, and identifiers.
+- Drafts (`draft: true`) are excluded from the `/blog/` list, article routes,
+  and RSS.
+- About/projects copy lives in `src/content/pages/`; the home intro is
+  `src/components/HomeIntro.astro`; Experience/Projects rows and links live in
+  `src/config.ts`.
 
 ## Deployment
 
-The site is deployed to Cloudflare via **Workers Static Assets** — there is no Worker script. `wrangler.jsonc` declares `assets.directory = "./dist"`, so Cloudflare runs `bun run build` and serves the built `dist/` directly. Don't add a Worker entrypoint or convert this to Pages without a reason; if you need server logic, add a Worker script alongside `assets` in `wrangler.jsonc`.
+GitHub Actions (`.github/workflows/deploy.yml`) runs install, check, test, build,
+then `wrangler deploy`. `wrangler.jsonc` declares Workers Static Assets with
+`./dist` and `not_found_handling: "404-page"` — there is no Worker script. Do not
+add an adapter or turn the site into SSR.
 
 ## Conventions
 
-- Tailwind v4 is configured via the Vite plugin (`@tailwindcss/vite`) and `@import "tailwindcss"` in `index.css` — there is **no `tailwind.config.js`**. Design tokens are CSS variables in the `@theme` block; reference them as Tailwind utilities (e.g. `text-ink`, `bg-paper`) or via `var(...)`.
-- The aesthetic relies on intentional irregularity (slight tilts, uneven border-radii, hand-drawn marker fonts). Match the surrounding style when adding elements rather than normalizing them.
-- Fonts are bundled (not loaded from a CDN). Body/mono/marker faces come from `@fontsource*` imports in `index.css` — use the Latin-subset entries (e.g. `ibm-plex-mono/latin-400.css`) and only the weights actually used (mono: 400 + 500). The decorative `Pinyon Script` monogram is a self-hosted A–Z subset at `src/assets/fonts/pinyon-script-AZ-400.woff2` (~12 kB) declared via a local `@font-face`; regenerate it with `pyftsubset … --unicodes="U+0041-005A"` if the face ever changes.
-- Formatting is handled by **Prettier** (`prettier.config.js`: double quotes, semicolons, trailing commas); `eslint-config-prettier` is last in `eslint.config.js` so ESLint doesn't fight it. Run `bun run format` before committing — don't hand-format.
+- Prettier handles formatting (`prettier.config` equivalent in
+  `.prettierrc.json`); run `bun run format` before committing.
+- Keep the PlainBlog visual language: system fonts, 65ch content column, 16px
+  base type, monospace dates/years, minimal chrome, no decorative footer or
+  animation.
+- Pages must keep exactly one `<h1>`, unique `<title>`/description, the skip
+  link, and keyboard-operable navigation.
+- No React/Vue/Tailwind, client-side router, runtime Markdown, CMS, or tracking.

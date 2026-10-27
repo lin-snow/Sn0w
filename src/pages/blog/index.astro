@@ -1,0 +1,35 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import { selectPublished } from "../../lib/publication.mjs";
+import { sitePath } from "../../lib/paths";
+
+const posts = selectPublished(await getCollection("posts"));
+const years = [...new Set(posts.map((post) => post.data.date.slice(0, 4)))];
+---
+
+<Base
+  title="博客"
+  description="L1nSn0w 的全部文章，按年份排列。"
+  current="博客"
+>
+  <h1 class="page-title">文章</h1>
+  {posts.length === 0 && <p class="empty-note">还没有公开文章。</p>}
+  {years.map((year) => (
+    <section class="post-year" data-year={year} aria-label={`${year} 年文章`}>
+      <h2>{year}</h2>
+      <ul class="post-list">
+        {posts
+          .filter((post) => post.data.date.startsWith(year))
+          .map((post) => (
+            <li>
+              <a href={sitePath(`blog/${post.id}/`)}>{post.data.title}</a>
+              <time datetime={post.data.date}>
+                {post.data.date.slice(5).replace("-", "/")}
+              </time>
+            </li>
+          ))}
+      </ul>
+    </section>
+  ))}
+</Base>

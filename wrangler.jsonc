@@ -1,9 +1,10 @@
 {
-  // Static site served by Workers Static Assets — no Worker script needed.
-  // Cloudflare runs `bun run build`, then deploys the contents of ./dist.
+  // Pure static site: Cloudflare serves the contents of ./dist directly.
+  // There is no Worker script and no runtime adapter.
   "name": "sn0w",
   "compatibility_date": "2026-05-27",
   "assets": {
     "directory": "./dist",
+    "not_found_handling": "404-page",
   },
 }

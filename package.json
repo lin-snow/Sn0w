@@ -3,39 +3,27 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "preview": "vite preview"
+    "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {
-    "@fontsource-variable/caveat": "^5.3.0",
-    "@fontsource-variable/hanken-grotesk": "^5.3.0",
-    "@fontsource/ibm-plex-mono": "^5.3.0",
-    "@fontsource/pinyon-script": "^5.3.0",
-    "@tailwindcss/vite": "^4.3.3",
-    "react": "^19.3.1",
-    "react-dom": "^19.3.1",
-    "tailwindcss": "^4.3.3"
+    "@astrojs/markdown-satteri": "^0.4.5",
+    "astro": "^7.4.2"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@types/node": "^24.19.2",
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
-    "@vitejs/plugin-react": "^6.1.2",
-    "eslint": "^10.13.0",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-react-refresh": "^0.5.7",
-    "globals": "^17.13.0",
+    "@astrojs/check": "^0.9.12",
     "prettier": "^3.9.10",
-    "typescript": "~6.0.3",
-    "typescript-eslint": "^8.72.1",
-    "vite": "^8.3.5"
+    "prettier-plugin-astro": "^1.1.2",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.153.0"
   }
 }

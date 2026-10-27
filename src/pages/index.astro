@@ -1,0 +1,126 @@
+---
+import Base from "../layouts/Base.astro";
+import HomeRow from "../components/HomeRow.astro";
+import Icon from "../components/Icon.astro";
+import { site } from "../config";
+import { sitePath } from "../lib/paths";
+import HomeIntro from "../components/HomeIntro.astro";
+
+const resolve = (href: string) =>
+  href.startsWith("/") && !href.startsWith("//") ? sitePath(href) : href;
+const urlLabel = (href?: string) => {
+  if (!href) return undefined;
+  const url = new URL(href);
+  return url.hostname === "github.com"
+    ? url.pathname.replace(/^\//, "")
+    : url.hostname.replace(/^www\./, "");
+};
+const social = site.social ?? [];
+const person = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: site.name,
+  jobTitle: "Software Engineer",
+  alumniOf: {
+    "@type": "CollegeOrUniversity",
+    name: "Guangdong University of Technology",
+  },
+  sameAs: [
+    "https://github.com/lin-snow",
+    "https://x.com/l1n_sn0w",
+    "https://memo.sn0w.fyi",
+  ],
+};
+---
+
+<Base title={site.name} description={site.description}>
+  <div class="home">
+    <h1 class="home-title">
+      <span class="home-greet">I'm</span>
+      <span class="home-name">{site.name}</span>
+      <span class="home-avatar" aria-hidden="true">
+        <img
+          src={sitePath("avatar.png")}
+          alt=""
+          width="28"
+          height="28"
+          decoding="async"
+        />
+      </span>
+    </h1>
+    <div class="intro">
+      <HomeIntro />
+    </div>
+    <a class="home-cta" href={site.coffeeChat.href}>
+      <Icon name="coffee" size={14} />
+      <span>{site.coffeeChat.label}</span>
+    </a>
+    {site.work.length > 0 && (
+      <section class="home-section" aria-labelledby="home-experience">
+        <h2 id="home-experience">Experience</h2>
+        <ul class="home-rows">
+          {site.work.map((item) => (
+            <li>
+              <HomeRow
+                name={item.name}
+                role={item.role}
+                href={item.href}
+                url={urlLabel(item.href)}
+                meta={item.meta}
+                icon={item.icon}
+              />
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+    {site.projects.length > 0 && (
+      <section class="home-section" aria-labelledby="home-projects">
+        <h2 id="home-projects">Projects</h2>
+        <ul class="home-rows">
+          {site.projects.map((item) => (
+            <li>
+              <HomeRow
+                name={item.name}
+                role={item.role}
+                href={item.href}
+                url={urlLabel(item.href)}
+                icon={item.icon}
+                stack={item.stack}
+              />
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+    {(social.length > 0 || site.elsewhere.length > 0) && (
+      <footer class="home-foot">
+        {social.length > 0 && (
+          <nav class="home-social" aria-label="社交媒体">
+            {social.map((item) => (
+              <a
+                href={resolve(item.href)}
+                rel="noreferrer"
+                aria-label={item.label}
+                data-tip={item.label}
+              >
+                {item.icon ? <Icon name={item.icon} size={16} /> : item.label}
+              </a>
+            ))}
+          </nav>
+        )}
+        {site.elsewhere.length > 0 && (
+          <nav class="home-elsewhere" aria-label="其他链接">
+            {site.elsewhere.map((link) => (
+              <a href={resolve(link.href)} rel="noreferrer">
+                {link.label}
+                <span aria-hidden="true">↗</span>
+              </a>
+            ))}
+          </nav>
+        )}
+      </footer>
+    )}
+  </div>
+  <script type="application/ld+json" set:html={JSON.stringify(person)} />
+</Base>

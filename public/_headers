@@ -1,3 +1,7 @@
-# Vite emits content-hashed files under /assets/ — safe to cache forever.
-/assets/*
+# Astro emits content-hashed files under /_astro/ — safe to cache forever.
+/_astro/*
   Cache-Control: public, max-age=31536000, immutable
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin

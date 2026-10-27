@@ -1,0 +1,67 @@
+---
+import { brandIcons } from "../lib/brand-icons.mjs";
+import { socialIcons } from "../lib/social-icons.mjs";
+import { sitePath } from "../lib/paths";
+
+interface Props {
+  name: string;
+  size?: number;
+  /** Force currentColor, ignoring the brand color. */
+  mono?: boolean;
+}
+const { name, size = 14, mono = false } = Astro.props;
+
+type IconData =
+  | {
+      viewBox: string;
+      d: string | string[];
+      rule?: "evenodd" | "nonzero";
+      color?: string;
+      /** Optical size multiplier for marks that are not full-bleed squares. */
+      scale?: number;
+    }
+  | { src: string; mask?: boolean; scale?: number };
+
+const icons = { ...socialIcons, ...brandIcons } as Record<string, IconData>;
+const item = icons[name];
+const viewBox = item && "viewBox" in item ? item.viewBox : undefined;
+const [, , w, h] = (viewBox ?? "0 0 1 1").split(" ").map(Number);
+const px = Math.max(
+  1,
+  Math.round(size * (item && "scale" in item ? (item.scale ?? 1) : 1)),
+);
+const width = Math.round((px * w) / h);
+---
+
+{item &&
+  ("src" in item ? (
+    item.mask || mono ? (
+      <span
+        class="brand-mask"
+        style={`--mask-icon:url(${sitePath(item.src)});--mask-size:${px}px`}
+        aria-hidden="true"
+      />
+    ) : (
+      <img
+        class="brand-image"
+        src={sitePath(item.src)}
+        width={px}
+        height={px}
+        alt=""
+        decoding="async"
+      />
+    )
+  ) : (
+    <svg
+      aria-hidden="true"
+      viewBox={item.viewBox}
+      width={width}
+      height={px}
+      fill={mono ? "currentColor" : (item.color ?? "currentColor")}
+      fill-rule={item.rule}
+    >
+      {(Array.isArray(item.d) ? item.d : [item.d]).map((d) => (
+        <path d={d} />
+      ))}
+    </svg>
+  ))}

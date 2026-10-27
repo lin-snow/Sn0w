@@ -1,0 +1,43 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  name: string;
+  role: string;
+  href?: string;
+  url?: string;
+  meta?: string;
+  icon?: string;
+  stack?: string[];
+}
+const { name, role, href, url, meta, icon, stack = [] } = Astro.props;
+
+const Tag = href ? "a" : "div";
+const attrs = href ? { href, target: "_blank", rel: "noreferrer" } : {};
+---
+
+<Tag class="home-row" {...attrs}>
+  <span class="home-row-main">
+    {icon && <Icon name={icon} size={16} />}
+    <span class="home-row-name">{name}</span>
+    <span class="home-row-role">~ {role}</span>
+  </span>
+  <span class="home-row-end">
+    {meta && <span class="home-row-meta">{meta}</span>}
+    {stack.length > 0 && (
+      <span class="home-row-stack">
+        {stack.map((key) => (
+          <Icon name={key} size={16} mono />
+        ))}
+      </span>
+    )}
+    {url && (
+      <span class="home-row-url">
+        {url}
+        <span class="home-row-arrow" aria-hidden="true">
+          ↗
+        </span>
+      </span>
+    )}
+  </span>
+</Tag>
