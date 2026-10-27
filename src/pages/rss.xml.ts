@@ -50,23 +50,31 @@ export async function GET({ site: configured }: { site?: URL }) {
       .replace(/<[^>]+>/g, " ")
       .replace(/\s+/g, " ")
       .trim();
+    const summary = post.data.description ?? text.slice(0, 180);
     items.push(`    <item>
       <title>${escapeXml(post.data.title)}</title>
       <link>${escapeXml(link)}</link>
       <guid isPermaLink="${siteUrl ? "true" : "false"}">${escapeXml(link)}</guid>
       <pubDate>${new Date(`${post.data.date}T00:00:00.000Z`).toUTCString()}</pubDate>
-      <description>${escapeXml(text.slice(0, 180))}</description>
+      <description>${escapeXml(summary)}</description>
       <content:encoded><![CDATA[${html.replaceAll("]]>", "]]]]><![CDATA[>")}]]></content:encoded>
     </item>`);
   }
   const self = toAbsolute("rss.xml", siteUrl);
+  const newest = posts[0];
+  const lastBuildDate = newest
+    ? new Date(
+        `${newest.data.updated ?? newest.data.date}T00:00:00.000Z`,
+      ).toUTCString()
+    : undefined;
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>${escapeXml(site.name)}</title>
     <description>${escapeXml(site.description)}</description>
     <link>${escapeXml(toAbsolute("/", siteUrl))}</link>
-    <atom:link xmlns:atom="http://www.w3.org/2005/Atom" href="${escapeXml(self)}" rel="self" type="application/rss+xml"/>
+    <language>zh-CN</language>
+${lastBuildDate ? `    <lastBuildDate>${lastBuildDate}</lastBuildDate>\n` : ""}    <atom:link xmlns:atom="http://www.w3.org/2005/Atom" href="${escapeXml(self)}" rel="self" type="application/rss+xml"/>
 ${items.join("\n")}
   </channel>
 </rss>

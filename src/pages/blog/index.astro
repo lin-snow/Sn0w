@@ -1,18 +1,36 @@
 ---
 import { getCollection } from "astro:content";
 import Base from "../../layouts/Base.astro";
+import { site } from "../../config";
 import { selectPublished } from "../../lib/publication.mjs";
 import { sitePath } from "../../lib/paths";
 
+const description = `${site.name} 的全部文章，按年份排列。`;
 const posts = selectPublished(await getCollection("posts"));
 const years = [...new Set(posts.map((post) => post.data.date.slice(0, 4)))];
+const blogUrl = Astro.site
+  ? new URL(Astro.url.pathname, Astro.site).href
+  : Astro.url.pathname;
+const absolute = (path: string) =>
+  Astro.site ? new URL(sitePath(path), Astro.site).href : sitePath(path);
+const blogLd = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  name: `${site.name} 博客`,
+  url: blogUrl,
+  description,
+  inLanguage: "zh-CN",
+  author: { "@type": "Person", name: site.author, url: absolute("/") },
+  blogPost: posts.map((post) => ({
+    "@type": "BlogPosting",
+    headline: post.data.title,
+    url: absolute(`blog/${post.id}/`),
+    datePublished: post.data.date,
+  })),
+};
 ---
 
-<Base
-  title="博客"
-  description="L1nSn0w 的全部文章，按年份排列。"
-  current="博客"
->
+<Base title="博客" description={description} current="博客" jsonLd={blogLd}>
   <h1 class="page-title">文章</h1>
   {posts.length === 0 && <p class="empty-note">还没有公开文章。</p>}
   {years.map((year) => (

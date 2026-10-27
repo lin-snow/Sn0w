@@ -16,24 +16,42 @@ const urlLabel = (href?: string) => {
     : url.hostname.replace(/^www\./, "");
 };
 const social = site.social ?? [];
+const homeUrl = Astro.site
+  ? new URL(sitePath("/"), Astro.site).href
+  : sitePath("/");
+const avatarUrl = Astro.site
+  ? new URL(sitePath("avatar.png"), Astro.site).href
+  : sitePath("avatar.png");
 const person = {
-  "@context": "https://schema.org",
   "@type": "Person",
+  "@id": `${homeUrl}#person`,
   name: site.name,
+  url: homeUrl,
+  image: avatarUrl,
+  description: site.description,
   jobTitle: "Software Engineer",
   alumniOf: {
     "@type": "CollegeOrUniversity",
     name: "Guangdong University of Technology",
   },
-  sameAs: [
-    "https://github.com/lin-snow",
-    "https://x.com/l1n_sn0w",
-    "https://memo.sn0w.fyi",
-  ],
+  sameAs: social.map((item) => item.href),
+};
+const website = {
+  "@type": "WebSite",
+  "@id": `${homeUrl}#website`,
+  url: homeUrl,
+  name: site.name,
+  description: site.description,
+  inLanguage: "zh-CN",
+  author: { "@id": `${homeUrl}#person` },
+};
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [website, person],
 };
 ---
 
-<Base title={site.name} description={site.description}>
+<Base title={site.name} description={site.description} jsonLd={jsonLd}>
   <div class="home">
     <h1 class="home-title">
       <span class="home-greet">I'm</span>
@@ -122,5 +140,4 @@ const person = {
       </footer>
     )}
   </div>
-  <script type="application/ld+json" set:html={JSON.stringify(person)} />
 </Base>

@@ -15,9 +15,14 @@ const posts = defineCollection({
   }),
   schema: z.object({
     title: z.string().trim().min(1),
+    description: z.string().trim().min(1).max(300).optional(),
     date: z
       .string()
       .refine(isCalendarDate, "Expected real YYYY-MM-DD calendar date"),
+    updated: z
+      .string()
+      .refine(isCalendarDate, "Expected real YYYY-MM-DD calendar date")
+      .optional(),
     draft: z.boolean().default(false),
   }),
 });

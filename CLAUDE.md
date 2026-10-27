@@ -42,10 +42,13 @@ at build time to override the origin (preview deploys, domain moves).
   article list (`/blog/`) grouped by year, reachable from the breadcrumb menu;
   `about.astro` and `projects.astro` render Markdown pages;
   `blog/[slug].astro` renders one post; `rss.xml.ts` builds the full-text feed;
+  `sitemap.xml.ts` lists every page and post with `lastmod`;
+  `robots.txt.ts` allows crawling and points at the sitemap;
   `404.astro` is the not-found page.
 - **`src/layouts/Base.astro`** — the single HTML shell: theme bootstrap script,
-  metadata/canonical/OG tags, breadcrumb, theme toggle, and the slot. All pages
-  go through it.
+  metadata/canonical/OG tags, article dates, JSON-LD (BreadcrumbList by default,
+  plus page-supplied schema), the optional `noindex`, breadcrumb, theme toggle,
+  and the slot. All pages go through it.
 - **`src/components/Breadcrumb.astro`** — home link plus the native
   `<details>` site menu driven by `site.nav`, and the `Home / Blog / title`
   article path.
@@ -77,8 +80,9 @@ at build time to override the origin (preview deploys, domain moves).
   `sqlite.svg`, `kubernetes.svg`, `docker.svg`).
 - **`src/content/posts/<slug>/index.md`** — one directory per post; the
   directory name is the slug. Frontmatter: required `title` and quoted
-  `YYYY-MM-DD` `date`, optional `draft: true`. Images live beside `index.md` and
-  are referenced as `./file.webp`.
+  `YYYY-MM-DD` `date`; optional `description` (search/social summary), quoted
+  `YYYY-MM-DD` `updated` (sitemap/schema modification date), and `draft: true`.
+  Images live beside `index.md` and are referenced as `./file.webp`.
 - **`src/content/pages/`** — `about.md` and `projects.md`, imported as
   components by their pages. The home intro is `HomeIntro.astro`, not Markdown.
 - **`src/content.config.ts` / `src/lib/publication.mjs`** — the single authority
@@ -86,6 +90,8 @@ at build time to override the origin (preview deploys, domain moves).
   sorting. Pages call `selectPublished()`; never re-implement these rules.
 - **`src/lib/paths.ts`** — prefixes site-root paths with Astro's `BASE_URL`
   (currently `/`; kept so a sub-path deployment would still work).
+- **`src/lib/excerpt.mjs`** — plain-text fallback used for a post's meta
+  description when its frontmatter has no `description`.
 - **`src/styles/global.css`** — the whole design system: CSS custom properties
   for the dark/light palette, typography, the home profile block, breadcrumbs,
   post lists, prose, code/table/image styling, the `.gallery` grid, and the
@@ -94,7 +100,7 @@ at build time to override the origin (preview deploys, domain moves).
   directives and turns `:::gallery` into a `.gallery` wrapper while keeping its
   image nodes in the AST, so Astro hashes, sizes, and lazy-loads them.
 - **`public/`** — favicons, avatar, official brand logos in `public/icons/`,
-  the hover meme (`meme.gif`), `_headers`, and `robots.txt`.
+  the hover meme (`meme.gif`), and `_headers`.
 
 ## Content workflow
 

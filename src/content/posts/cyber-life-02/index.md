@@ -1,5 +1,6 @@
 ---
 title: "我的赛博生活02"
+description: "赛博生活 02：Minecraft 15 周年、通关《风之旅人》、The Finals 穿搭、桌面与 NAS 折腾记录。"
 date: "2024-05-29"
 ---
 

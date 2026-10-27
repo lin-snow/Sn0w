@@ -1,5 +1,6 @@
 ---
 title: "2023年终总结"
+description: "回顾 2023：高考、GitHub 学生开发包、入读广工、第一个课设、博客现状，以及 Obsidian 与 The Finals。"
 date: "2024-01-03"
 ---
 

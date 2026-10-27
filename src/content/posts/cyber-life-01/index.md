@@ -1,5 +1,6 @@
 ---
 title: "我的赛博生活01"
+description: "赛博生活 01：Arc 浏览器、JetBrains 学生认证、小米 AX3000T、iPhone 4s、iCloud+、FIMO Pro、Getting Over It 与 Reeder。"
 date: "2024-03-03"
 ---
 

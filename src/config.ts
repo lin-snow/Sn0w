@@ -1,6 +1,7 @@
 export const site = {
   name: "L1nSn0w",
   author: "L1nSn0w",
+  twitter: "@l1n_sn0w",
   description: "L1nSn0w 的个人主页与博客：记录技术、生活与成长。",
   coffeeChat: {
     label: "Coffee chat",
