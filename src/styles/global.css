@@ -271,11 +271,7 @@ h1,
   padding-left: 10px;
   opacity: 1;
 }
-.home-greet {
-  margin-right: 6px;
-  color: var(--muted);
-  font-weight: 400;
-}
+
 .home-name {
   font-weight: 600;
 }
