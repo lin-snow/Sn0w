@@ -34,10 +34,10 @@ at build time to override the origin (preview deploys, domain moves).
 - **`src/pages/`** — route entry points. `index.astro` is the home page: a flat
   full-column layout (`.home`, no card) with an `I'm <name>` 20px `h1` whose
   28px avatar slides in on hover, the English `HomeIntro.astro` block (inline
-  brand icons), the coffee-toned `site.coffeeChat` CTA, the Experience and
-  Projects rows from `site.work` / `site.projects`, and a footer with icon-only
-  social links (CSS tooltip from `data-tip` on hover/focus) plus
-  `site.elsewhere` — no post list;
+  brand icons, a plain Email link and a Coffee Chat pill from `site.email` /
+  `site.coffeeChat`), the Experience and Projects rows from `site.work` /
+  `site.projects`, and a footer with icon-only social links (CSS tooltip from
+  `data-tip` on hover/focus) plus `site.elsewhere` — no post list;
   `blog/index.astro` is the
   article list (`/blog/`) grouped by year, reachable from the breadcrumb menu;
   `about.astro` and `projects.astro` render Markdown pages;
@@ -69,7 +69,7 @@ at build time to override the origin (preview deploys, domain moves).
 - **`src/components/Lightbox.astro`** — article image viewer rendered only by
   `blog/[slug].astro`; wraps `.prose img` in a button at runtime and opens the
   full-size image in a native `<dialog>` (Esc, backdrop, close button).
-- **`src/config.ts`** — site identity, the `coffeeChat` CTA label/link,
+- **`src/config.ts`** — site identity, the `email` / `coffeeChat` contact links,
   navigation, social links, "Elsewhere" links, and the `work` / `projects` rows
   rendered on the home page.
 - **`src/lib/brand-icons.mjs`** — Simple Icons (CC0), Heroicons (MIT), FormKit

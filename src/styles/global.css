@@ -90,7 +90,7 @@ a:hover {
 .shell {
   position: relative;
   width: 100%;
-  max-width: 62ch;
+  max-width: 60ch;
   margin: 0 auto;
   min-width: 0;
 }
@@ -365,12 +365,11 @@ h1,
 .intro blockquote p {
   margin: 0;
 }
-.home-cta {
+.intro .cta {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 16px;
-  padding: 4px 11px 4px 9px;
+  gap: 5px;
+  padding: 1px 10px 1px 8px;
   border-radius: 999px;
   background: var(--cta-bg);
   color: var(--cta-fg);
@@ -380,13 +379,16 @@ h1,
   text-decoration: none;
   transition: background-color 0.15s ease;
 }
-.home-cta svg {
+.intro .cta svg {
   flex: none;
+  margin-right: 0;
+  color: inherit;
   opacity: 0.9;
 }
-.home-cta:hover,
-.home-cta:focus-visible {
+.intro .cta:hover,
+.intro .cta:focus-visible {
   background: var(--cta-bg-hover);
+  color: var(--cta-fg);
   text-decoration: none;
 }
 .empty-note {

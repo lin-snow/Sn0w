@@ -1,16 +1,17 @@
 ---
 import Icon from "./Icon.astro";
 import { sitePath } from "../lib/paths";
+import { site } from "../config";
 ---
 
 <!-- prettier-ignore -->
-<p>I'm a software engineering student at <span class="keep"><Icon name="gdut" /><strong>GDUT</strong></span>, formerly a backend intern at <span class="keep"><Icon name="dify" /><strong>LangGenius</strong></span>.</p>
+<p>I'm a software engineering student at <span class="keep"><Icon name="gdut" /><strong>GDUT</strong></span> and previously interned as a backend engineer at <span class="keep"><Icon name="dify" /><strong>LangGenius</strong></span>.</p>
 <!-- prettier-ignore -->
-<p>I build backend systems and developer tools, mostly in <span class="keep"><Icon name="go" /><strong>Go</strong></span> and <span class="keep"><Icon name="typescript" /><strong>TypeScript</strong></span>. I enjoy turning complex problems into simple, maintainable solutions.</p>
+<p>I build backend systems and developer tools, primarily with <span class="keep"><Icon name="go" /><strong>Go</strong></span> and <span class="keep"><Icon name="typescript" /><strong>TypeScript</strong></span>. I enjoy turning complex problems into simple, maintainable solutions.</p>
 <!-- prettier-ignore -->
-<p>For infrastructure, I lean on <span class="keep"><Icon name="kubernetes" /><strong>Kubernetes</strong></span>, <span class="keep"><Icon name="docker" /><strong>Docker</strong></span>, and <span class="keep"><Icon name="opentelemetry" /><strong>OpenTelemetry</strong></span>, focusing on cloud-native platforms, distributed systems, and observability.</p>
+<p>I work with <span class="keep"><Icon name="kubernetes" /><strong>Kubernetes</strong></span>, <span class="keep"><Icon name="docker" /><strong>Docker</strong></span>, and <span class="keep"><Icon name="opentelemetry" /><strong>OpenTelemetry</strong></span>, with a focus on cloud-native infrastructure, distributed systems, and observability.</p>
 <!-- prettier-ignore -->
-<p>Recently, I've been exploring agent systems and the infrastructure behind them. I'm also interested in the web, product design, and the little details that make software worth using.<span
+<p>Lately, I've been exploring agent systems and the infrastructure behind them. I'm also interested in the web, product design, and the little details that make software worth using.<span
     class="meme"
     tabindex="0"
     role="img"
@@ -30,4 +31,4 @@ import { sitePath } from "../lib/paths";
         decoding="async"
       /></span></span></p>
 <!-- prettier-ignore -->
-<p>Always happy to connect over interesting projects and ideas. Reach me at <span class="keep"><Icon name="email" /><a href="mailto:l1nsn0w@qq.com">l1nsn0w@qq.com</a></span>.</p>
+<p>Always happy to exchange ideas, discuss interesting projects, or meet fellow builders. Feel free to reach out via <span class="keep"><Icon name="email" /><a href={site.email.href}>{site.email.label}</a></span> or join me <span class="keep">for a <a class="cta" href={site.coffeeChat.href}><Icon name="coffee" size={13} /><span>{site.coffeeChat.label}</span></a></span></p>

@@ -11,10 +11,13 @@ interface Props {
 }
 const { name, size = 14, mono = false } = Astro.props;
 
+/** A path inside a stroked mark that is tinted instead of outlined. */
+type VectorPart = string | { d: string; fill?: boolean; opacity?: number };
+
 type IconData =
   | {
       viewBox: string;
-      d: string | string[];
+      d: string | VectorPart[];
       rule?: "evenodd" | "nonzero";
       color?: string;
       /** Optical size multiplier for marks that are not full-bleed squares. */
@@ -33,6 +36,12 @@ const px = Math.max(
   Math.round(size * (item && "scale" in item ? (item.scale ?? 1) : 1)),
 );
 const width = Math.round((px * w) / h);
+const parts =
+  item && !("src" in item)
+    ? (Array.isArray(item.d) ? item.d : [item.d]).map((part) =>
+        typeof part === "string" ? { d: part } : part,
+      )
+    : [];
 ---
 
 {item &&
@@ -72,8 +81,13 @@ const width = Math.round((px * w) / h);
       stroke-linecap={item.stroke ? "round" : undefined}
       stroke-linejoin={item.stroke ? "round" : undefined}
     >
-      {(Array.isArray(item.d) ? item.d : [item.d]).map((d) => (
-        <path d={d} />
+      {parts.map((part) => (
+        <path
+          d={part.d}
+          opacity={part.opacity}
+          fill={part.fill ? "currentColor" : undefined}
+          stroke={part.fill ? "none" : undefined}
+        />
       ))}
     </svg>
   ))}

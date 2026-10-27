@@ -3,8 +3,9 @@ export const site = {
   author: "L1nSn0w",
   twitter: "@l1n_sn0w",
   description: "L1nSn0w 的个人主页与博客：记录技术、生活与成长。",
+  email: { label: "Email", href: "mailto:l1nsn0w@qq.com" },
   coffeeChat: {
-    label: "Coffee chat",
+    label: "Coffee Chat",
     href: "mailto:l1nsn0w@qq.com?subject=Coffee%20chat",
   },
   nav: [{ label: "Blog", href: "/blog/" }],
@@ -15,6 +16,7 @@ export const site = {
       href: "https://github.com/lin-snow",
     },
     { label: "X", icon: "x", href: "https://x.com/l1n_sn0w" },
+    { label: "CV", icon: "cv", href: "https://cv.sn0w.fyi" },
     { label: "Ech0", icon: "paper", href: "https://memo.sn0w.fyi" },
     { label: "Sponsor", icon: "heart", href: "https://sponsor.sn0w.fyi" },
   ],
