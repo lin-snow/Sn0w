@@ -848,9 +848,14 @@ a.home-row:hover {
   width: 100%;
   margin: 0;
 }
+/* The floor is capped at half a row (minus the 12px gap) so a phone still fits
+   two images side by side instead of collapsing to a single column. */
 .prose .gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(180px, calc(50% - 6px)), 1fr)
+  );
   align-items: start;
   gap: 12px;
   margin: 24px 0;
