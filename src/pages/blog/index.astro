@@ -16,7 +16,7 @@ const absolute = (path: string) =>
 const blogLd = {
   "@context": "https://schema.org",
   "@type": "Blog",
-  name: `${site.name} 博客`,
+  name: `${site.name} Blog`,
   url: blogUrl,
   description,
   inLanguage: "zh-CN",
@@ -30,8 +30,8 @@ const blogLd = {
 };
 ---
 
-<Base title="博客" description={description} current="博客" jsonLd={blogLd}>
-  <h1 class="page-title">文章</h1>
+<Base title="Blog" description={description} current="Blog" jsonLd={blogLd}>
+  <h1 class="page-title">Articles</h1>
   {posts.length === 0 && <p class="empty-note">还没有公开文章。</p>}
   {years.map((year) => (
     <section class="post-year" data-year={year} aria-label={`${year} 年文章`}>

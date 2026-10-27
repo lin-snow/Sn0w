@@ -7,7 +7,7 @@ export const site = {
     label: "Coffee chat",
     href: "mailto:l1nsn0w@qq.com?subject=Coffee%20chat",
   },
-  nav: [{ label: "博客", href: "/blog/" }],
+  nav: [{ label: "Blog", href: "/blog/" }],
   social: [
     {
       label: "GitHub",
