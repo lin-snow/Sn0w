@@ -37,15 +37,13 @@ const gallery = {
   },
 };
 
-// Production canonical URLs are opt-in: set SITE_URL to the absolute site
-// origin (for example https://sn0w.fyi) at build time. Local builds stay
-// portable and emit no fake canonical links.
-const site = process.env.SITE_URL;
+// Canonical URLs use the production origin by default; SITE_URL overrides it
+// (for example a preview deployment or a domain move).
+const site = process.env.SITE_URL ?? "https://sn0w.fyi/";
 if (
-  site &&
-  (!/^https?:$/.test(new URL(site).protocol) ||
-    new URL(site).username ||
-    new URL(site).password)
+  !/^https?:$/.test(new URL(site).protocol) ||
+  new URL(site).username ||
+  new URL(site).password
 ) {
   throw new Error(
     "SITE_URL must be an absolute HTTP(S) URL without credentials",
@@ -56,7 +54,7 @@ export default defineConfig({
   output: "static",
   trailingSlash: "always",
   compressHTML: true,
-  ...(site ? { site } : {}),
+  site,
   markdown: {
     processor: satteri({
       features: { directive: true },

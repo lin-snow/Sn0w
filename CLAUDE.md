@@ -26,8 +26,8 @@ bun run format       # prettier --write .
 bun run format:check # prettier --check .
 ```
 
-Production builds set `SITE_URL=https://sn0w.fyi/`; without it, canonical and
-RSS absolute URLs are intentionally omitted.
+Canonical and RSS absolute URLs default to `https://sn0w.fyi/`; set `SITE_URL`
+at build time to override the origin (preview deploys, domain moves).
 
 ## Architecture
 
@@ -113,10 +113,12 @@ RSS absolute URLs are intentionally omitted.
 
 ## Deployment
 
-GitHub Actions (`.github/workflows/deploy.yml`) runs install, check, test, build,
-then `wrangler deploy`. `wrangler.jsonc` declares Workers Static Assets with
-`./dist` and `not_found_handling: "404-page"` — there is no Worker script. Do not
-add an adapter or turn the site into SSR.
+GitHub Actions (`.github/workflows/deploy.yml`) runs install, check, test, build.
+Cloudflare's own Git build for the `sn0w` Worker publishes `dist/` on every push;
+the workflow's `wrangler deploy` step only runs when `CLOUDFLARE_API_TOKEN` and
+`CLOUDFLARE_ACCOUNT_ID` secrets exist. `wrangler.jsonc` declares Workers Static
+Assets with `./dist` and `not_found_handling: "404-page"` — there is no Worker
+script. Do not add an adapter or turn the site into SSR.
 
 ## Conventions
 

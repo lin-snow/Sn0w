@@ -33,13 +33,12 @@ bun run preview       # 预览 dist/
 
 ## 部署
 
-推送到 `main` 后，`.github/workflows/deploy.yml` 会安装依赖、运行检查与测试、
-构建 `dist/`，再用 Wrangler 发布到 Cloudflare Workers Static Assets。
-仓库需要在 GitHub 配置两个 secret：
+推送到 `main` 后，Cloudflare 上该 Worker 的 Git 构建会安装依赖、运行构建并把
+`dist/` 发布为 Workers Static Assets，站点随即更新。`.github/workflows/deploy.yml`
+同时在 GitHub Actions 里跑检查、测试与构建；只有仓库另配了
+`CLOUDFLARE_API_TOKEN`、`CLOUDFLARE_ACCOUNT_ID` 两个 secret 时，它才会额外执行
+`wrangler deploy` 作为兜底。
 
-- `CLOUDFLARE_API_TOKEN`
-- `CLOUDFLARE_ACCOUNT_ID`
-
-生产构建通过 `SITE_URL=https://sn0w.fyi/` 输出 canonical、Open Graph 与 RSS
-绝对地址；本地构建不设置该变量。Cloudflare 配置在 `wrangler.jsonc`：
+构建默认用 `https://sn0w.fyi/` 生成 canonical、Open Graph 与 RSS 绝对地址，
+需要换域名或部署预览版时用 `SITE_URL` 覆盖。Cloudflare 配置在 `wrangler.jsonc`：
 `./dist` 作为静态资源目录，未知路径返回 `dist/404.html`。
