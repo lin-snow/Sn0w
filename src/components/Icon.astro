@@ -19,6 +19,8 @@ type IconData =
       color?: string;
       /** Optical size multiplier for marks that are not full-bleed squares. */
       scale?: number;
+      /** Stroke width in viewBox units; renders the mark as an outline. */
+      stroke?: number;
     }
   | { src: string; mask?: boolean; scale?: number };
 
@@ -57,8 +59,18 @@ const width = Math.round((px * w) / h);
       viewBox={item.viewBox}
       width={width}
       height={px}
-      fill={mono ? "currentColor" : (item.color ?? "currentColor")}
+      fill={
+        item.stroke
+          ? "none"
+          : mono
+            ? "currentColor"
+            : (item.color ?? "currentColor")
+      }
       fill-rule={item.rule}
+      stroke={item.stroke ? (item.color ?? "currentColor") : undefined}
+      stroke-width={item.stroke}
+      stroke-linecap={item.stroke ? "round" : undefined}
+      stroke-linejoin={item.stroke ? "round" : undefined}
     >
       {(Array.isArray(item.d) ? item.d : [item.d]).map((d) => (
         <path d={d} />

@@ -90,7 +90,7 @@ a:hover {
 .shell {
   position: relative;
   width: 100%;
-  max-width: 60ch;
+  max-width: 62ch;
   margin: 0 auto;
   min-width: 0;
 }
@@ -300,6 +300,13 @@ h1,
 }
 .intro .keep {
   white-space: nowrap;
+}
+.intro a {
+  text-decoration: none;
+}
+.intro a:hover,
+.intro a:focus-visible {
+  color: var(--fg);
 }
 .intro strong {
   color: var(--fg);
@@ -629,6 +636,8 @@ a.home-row:hover {
   width: 16px;
   height: 16px;
   flex: none;
+}
+.home-social svg:not([stroke]) {
   fill: currentColor;
 }
 .home-elsewhere {

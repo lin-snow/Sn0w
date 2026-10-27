@@ -16,6 +16,7 @@ export const site = {
     },
     { label: "X", icon: "x", href: "https://x.com/l1n_sn0w" },
     { label: "Ech0", icon: "paper", href: "https://memo.sn0w.fyi" },
+    { label: "Sponsor", icon: "heart", href: "https://sponsor.sn0w.fyi" },
   ],
   elsewhere: [{ label: "Follow me", href: "https://x.com/l1n_sn0w" }],
   work: [
