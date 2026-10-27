@@ -90,7 +90,7 @@ a:hover {
 .shell {
   position: relative;
   width: 100%;
-  max-width: 65ch;
+  max-width: 60ch;
   margin: 0 auto;
   min-width: 0;
 }
