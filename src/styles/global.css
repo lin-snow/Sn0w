@@ -19,6 +19,9 @@
   --cta-bg: #e7c8a6;
   --cta-bg-hover: #f0d6b9;
   --cta-fg: #1e140b;
+  /* Text selection: pure reverse video, no tint — crisp instead of muddy. */
+  --selection: #fff;
+  --selection-fg: #000;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background: var(--bg);
   color: var(--fg);
@@ -45,6 +48,8 @@
   --cta-bg: #6f4e37;
   --cta-bg-hover: #7d5940;
   --cta-fg: #fdf6ec;
+  --selection: #000;
+  --selection-fg: #fff;
 }
 @media (prefers-color-scheme: light) {
   :root:not([data-theme]) {
@@ -66,6 +71,8 @@
     --cta-bg: #6f4e37;
     --cta-bg-hover: #7d5940;
     --cta-fg: #fdf6ec;
+    --selection: #000;
+    --selection-fg: #fff;
   }
 }
 * {
@@ -86,6 +93,11 @@ a:hover {
 :focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 4px;
+}
+::selection {
+  background: var(--selection);
+  color: var(--selection-fg);
+  text-decoration-color: currentColor;
 }
 .shell {
   position: relative;
