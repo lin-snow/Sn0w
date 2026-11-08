@@ -24,12 +24,57 @@ const toAbsolute = (rootPath: string, siteUrl: string) => {
   return siteUrl ? new URL(withBase, siteUrl).href : withBase;
 };
 
+const absolutizeSrcset = (srcset: string, siteUrl: string) =>
+  srcset
+    .split(",")
+    .map((candidate) => {
+      const [url, ...descriptor] = candidate.trim().split(/\s+/);
+      if (!url) return "";
+      return [
+        url.startsWith("/") ? toAbsolute(url, siteUrl) : url,
+        ...descriptor,
+      ]
+        .join(" ")
+        .trim();
+    })
+    .join(", ");
+
+// Feed readers often ignore srcset. Point the fallback at a variant that fits
+// the article column instead of the original 4000px screenshot.
+const preferFeedImage = (html: string) =>
+  html.replace(/<img\b[^>]*>/g, (tag) => {
+    const srcset = tag.match(/\bsrcset="([^"]+)"/)?.[1];
+    if (!srcset) return tag;
+    const candidates = srcset
+      .split(",")
+      .map((candidate) => {
+        const [url, descriptor = ""] = candidate.trim().split(/\s+/);
+        return { url, width: Number.parseFloat(descriptor) };
+      })
+      .filter(({ url, width }) => url && Number.isFinite(width));
+    if (candidates.length === 0) return tag;
+    const fitted = candidates.filter(({ width }) => width <= 1280);
+    const best = (fitted.length > 0 ? fitted : [candidates[0]]).reduce(
+      (largest, candidate) =>
+        candidate.width > largest.width ? candidate : largest,
+    );
+    return tag.replace(/\bsrc="[^"]*"/, `src="${best.url}"`);
+  });
+
 const absolutizeHtml = (html: string, siteUrl: string) =>
   siteUrl
-    ? html.replace(
-        /\b(href|src)="\/([^"]*)"/g,
-        (_, attr: string, rest: string) =>
-          `${attr}="${toAbsolute(rest, siteUrl)}"`,
+    ? preferFeedImage(
+        html
+          .replace(
+            /\b(href|src)="\/([^"]*)"/g,
+            (_, attr: string, rest: string) =>
+              `${attr}="${toAbsolute(rest, siteUrl)}"`,
+          )
+          .replace(
+            /\bsrcset="([^"]*)"/g,
+            (_, value: string) =>
+              `srcset="${absolutizeSrcset(value, siteUrl)}"`,
+          ),
       )
     : html;
 
@@ -68,13 +113,13 @@ export async function GET({ site: configured }: { site?: URL }) {
       ).toUTCString()
     : undefined;
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>${escapeXml(site.name)}</title>
     <description>${escapeXml(site.description)}</description>
     <link>${escapeXml(toAbsolute("/", siteUrl))}</link>
     <language>zh-CN</language>
-${lastBuildDate ? `    <lastBuildDate>${lastBuildDate}</lastBuildDate>\n` : ""}    <atom:link xmlns:atom="http://www.w3.org/2005/Atom" href="${escapeXml(self)}" rel="self" type="application/rss+xml"/>
+${lastBuildDate ? `    <lastBuildDate>${lastBuildDate}</lastBuildDate>\n` : ""}    <atom:link href="${escapeXml(self)}" rel="self" type="application/rss+xml"/>
 ${items.join("\n")}
   </channel>
 </rss>
