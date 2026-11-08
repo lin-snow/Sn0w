@@ -3,8 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "packageManager": "bun@1.4.3",
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=22.22.0"
   },
   "scripts": {
     "dev": "astro dev",
@@ -16,14 +17,17 @@
     "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {
-    "@astrojs/markdown-satteri": "^0.4.5",
-    "astro": "^7.4.2"
+    "@astrojs/markdown-satteri": "^0.4.7",
+    "astro": "^7.4.7"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
     "prettier": "^3.9.10",
     "prettier-plugin-astro": "^1.1.2",
-    "typescript": "^5.9.3",
-    "wrangler": "^4.153.0"
+    "typescript": "^6.0.3",
+    "wrangler": "^4.158.0"
+  },
+  "overrides": {
+    "@emnapi/runtime": "1.11.3"
   }
 }
