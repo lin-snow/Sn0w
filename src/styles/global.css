@@ -1,79 +1,47 @@
+/* One palette, two schemes: `light-dark()` follows the OS until the theme
+   toggle stamps data-theme, so no token is ever declared twice. */
 :root {
   scrollbar-gutter: stable;
-  color-scheme: dark;
-  --bg: #111110;
-  --fg: #eeeeec;
-  --muted: #b5b3ad;
-  --faint: #77756f;
-  --line: #373732;
-  --code-bg: #191918;
-  --pre-bg: #121212;
-  --menu-bg: #232321;
-  --menu-line: #494944;
-  --menu-hover: #373734;
-  --skip-bg: #292927;
-  --row-hover: #262626;
-  --focus: #eeeeec;
-  --shadow: #0008;
+  color-scheme: light dark;
+  --bg: light-dark(#fff, #111110);
+  --fg: light-dark(#171717, #eeeeec);
+  --muted: light-dark(#6f6f6f, #b5b3ad);
+  --faint: light-dark(#8a8a8a, #77756f);
+  --line: light-dark(#e6e6e6, #373732);
+  --code-bg: light-dark(#f4f4f4, #191918);
+  --pre-bg: light-dark(#f7f7f7, #121212);
+  --menu-bg: light-dark(#fff, #232321);
+  --menu-line: light-dark(#e6e6e6, #494944);
+  --menu-hover: light-dark(#f4f4f4, #373734);
+  --skip-bg: light-dark(#f4f4f4, #292927);
+  --row-hover: light-dark(#f2f2f2, #262626);
+  --focus: light-dark(#171717, #eeeeec);
+  --shadow: light-dark(#00000014, #0008);
   /* Coffee-chat CTA, tuned per theme. */
-  --cta-bg: #e7c8a6;
-  --cta-bg-hover: #f0d6b9;
-  --cta-fg: #1e140b;
+  --cta-bg: light-dark(#6f4e37, #e7c8a6);
+  --cta-bg-hover: light-dark(#7d5940, #f0d6b9);
+  --cta-fg: light-dark(#fdf6ec, #1e140b);
   /* Text selection: pure reverse video, no tint — crisp instead of muddy. */
-  --selection: #fff;
-  --selection-fg: #000;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --selection: light-dark(#000, #fff);
+  --selection-fg: light-dark(#fff, #000);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
   background: var(--bg);
   color: var(--fg);
   font-size: 16px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scrollbar-color: var(--faint) transparent;
 }
 :root[data-theme="light"] {
   color-scheme: light;
-  --bg: #fff;
-  --fg: #171717;
-  --muted: #6f6f6f;
-  --faint: #8a8a8a;
-  --line: #e6e6e6;
-  --code-bg: #f4f4f4;
-  --pre-bg: #f7f7f7;
-  --menu-bg: #fff;
-  --menu-line: #e6e6e6;
-  --menu-hover: #f4f4f4;
-  --skip-bg: #f4f4f4;
-  --row-hover: #f2f2f2;
-  --focus: #171717;
-  --shadow: #00000014;
-  --cta-bg: #6f4e37;
-  --cta-bg-hover: #7d5940;
-  --cta-fg: #fdf6ec;
-  --selection: #000;
-  --selection-fg: #fff;
 }
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme]) {
-    color-scheme: light;
-    --bg: #fff;
-    --fg: #171717;
-    --muted: #6f6f6f;
-    --faint: #8a8a8a;
-    --line: #e6e6e6;
-    --code-bg: #f4f4f4;
-    --pre-bg: #f7f7f7;
-    --menu-bg: #fff;
-    --menu-line: #e6e6e6;
-    --menu-hover: #f4f4f4;
-    --skip-bg: #f4f4f4;
-    --row-hover: #f2f2f2;
-    --focus: #171717;
-    --shadow: #00000014;
-    --cta-bg: #6f4e37;
-    --cta-bg-hover: #7d5940;
-    --cta-fg: #fdf6ec;
-    --selection: #000;
-    --selection-fg: #fff;
-  }
+:root[data-theme="dark"] {
+  color-scheme: dark;
 }
 * {
   box-sizing: border-box;
@@ -249,6 +217,7 @@ h1,
   font-weight: 400;
   margin-bottom: 12px;
   overflow-wrap: anywhere;
+  text-wrap: balance;
 }
 .home {
   margin: 0 auto;
@@ -292,6 +261,7 @@ h1,
   font-size: 14px;
   line-height: 1.7;
   color: var(--muted);
+  text-wrap: pretty;
 }
 .intro p:last-child {
   margin-bottom: 0;
@@ -308,13 +278,6 @@ h1,
 }
 .intro .keep {
   white-space: nowrap;
-}
-.intro a {
-  text-decoration: none;
-}
-.intro a:hover,
-.intro a:focus-visible {
-  color: var(--fg);
 }
 .intro strong {
   color: var(--fg);
@@ -685,17 +648,19 @@ a.home-row:hover {
 }
 .article-header h1 {
   margin-bottom: 12px;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 .prose {
   color: var(--muted);
   font-size: 16px;
   line-height: 28px;
   min-width: 0;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  line-break: strict;
 }
 .prose p {
   margin: 20px 0;
+  text-wrap: pretty;
 }
 .intro a,
 .prose a,
@@ -723,6 +688,7 @@ a.home-row:hover {
   line-height: 1.3;
   font-weight: 600;
   margin: 32px 0 8px;
+  text-wrap: balance;
 }
 .prose > :first-child {
   margin-top: 0;
@@ -772,35 +738,31 @@ a.home-row:hover {
   line-height: 1.75;
   background: var(--pre-bg);
   overflow-wrap: normal;
+  tab-size: 4;
+}
+.prose li::marker {
+  color: var(--faint);
 }
 .prose pre code {
   white-space: pre;
 }
-:root[data-theme="dark"] .astro-code,
-:root[data-theme="dark"] .astro-code span {
-  color: var(--shiki-dark) !important;
-  font-style: var(--shiki-dark-font-style) !important;
-  font-weight: var(--shiki-dark-font-weight) !important;
-  text-decoration: var(--shiki-dark-text-decoration) !important;
-}
-:root[data-theme="light"] .astro-code,
-:root[data-theme="light"] .astro-code span {
-  color: var(--shiki-light) !important;
-  font-style: var(--shiki-light-font-style) !important;
-  font-weight: var(--shiki-light-font-weight) !important;
-  text-decoration: var(--shiki-light-text-decoration) !important;
-}
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme]) .astro-code,
-  :root:not([data-theme]) .astro-code span {
-    color: var(--shiki-light);
-  }
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) .astro-code,
-  :root:not([data-theme]) .astro-code span {
-    color: var(--shiki-dark);
-  }
+/* Dual-theme Shiki output carries both colours as custom properties; pick one
+   with the same light-dark() switch the palette uses. */
+.astro-code,
+.astro-code span {
+  color: light-dark(var(--shiki-light), var(--shiki-dark));
+  font-style: light-dark(
+    var(--shiki-light-font-style),
+    var(--shiki-dark-font-style)
+  );
+  font-weight: light-dark(
+    var(--shiki-light-font-weight),
+    var(--shiki-dark-font-weight)
+  );
+  text-decoration: light-dark(
+    var(--shiki-light-text-decoration),
+    var(--shiki-dark-text-decoration)
+  );
 }
 .prose table {
   display: block;
@@ -948,4 +910,16 @@ a.home-row:hover {
 }
 body:has(dialog.lightbox[open]) {
   overflow: hidden;
+}
+
+/* Motion is decoration here; drop it for readers who ask for less. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
