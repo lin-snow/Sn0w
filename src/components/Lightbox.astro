@@ -33,6 +33,23 @@
     dialog?.close();
   };
 
+  // The in-page image picks a width for the column; the lightbox wants the
+  // largest variant the srcset offers, so zoomed-in screenshots stay sharp.
+  const largestSource = (img: HTMLImageElement) => {
+    let best: string | undefined;
+    let bestWidth = 0;
+    for (const entry of (img.getAttribute("srcset") ?? "").split(",")) {
+      const [url, descriptor = ""] = entry.trim().split(/\s+/);
+      if (!url || !descriptor.endsWith("w")) continue;
+      const width = Number.parseFloat(descriptor);
+      if (width > bestWidth) {
+        bestWidth = width;
+        best = url;
+      }
+    }
+    return best ?? (img.currentSrc || img.src);
+  };
+
   if (dialog && preview && caption && closeButton) {
     const images = document.querySelectorAll<HTMLImageElement>(".prose img");
 
@@ -47,7 +64,7 @@
       trigger.append(img);
 
       trigger.addEventListener("click", () => {
-        preview.src = img.currentSrc || img.src;
+        preview.src = largestSource(img);
         preview.alt = img.alt;
         caption.textContent = img.alt;
         caption.hidden = !img.alt;

@@ -4,7 +4,7 @@ import Base from "../../layouts/Base.astro";
 import Lightbox from "../../components/Lightbox.astro";
 import { site } from "../../config";
 import { excerpt } from "../../lib/excerpt.mjs";
-import { sitePath } from "../../lib/paths";
+import { absoluteUrl, currentUrl } from "../../lib/urls";
 import { selectPublished } from "../../lib/publication.mjs";
 
 export async function getStaticPaths() {
@@ -16,31 +16,36 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 const description = post.data.description ?? excerpt(post.body);
-const pageUrl = Astro.site
-  ? new URL(Astro.url.pathname, Astro.site).href
-  : Astro.url.pathname;
-const homeUrl = Astro.site
-  ? new URL(sitePath("/"), Astro.site).href
-  : sitePath("/");
-const blogUrl = Astro.site
-  ? new URL(sitePath("blog/"), Astro.site).href
-  : sitePath("blog/");
-const avatarUrl = Astro.site
-  ? new URL(sitePath("avatar.png"), Astro.site).href
-  : sitePath("avatar.png");
+const pageUrl = currentUrl(Astro.site, Astro.url.pathname);
+const homeUrl = absoluteUrl(Astro.site, "/");
+const blogUrl = absoluteUrl(Astro.site, "blog/");
+const avatarUrl = absoluteUrl(Astro.site, "avatar.png");
+const ogUrl = absoluteUrl(Astro.site, "og.png");
 const modified = post.data.updated ?? post.data.date;
 const articleLd = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
   headline: post.data.title,
   description,
-  image: avatarUrl,
+  image: {
+    "@type": "ImageObject",
+    url: ogUrl,
+    width: 1200,
+    height: 630,
+  },
   datePublished: post.data.date,
   dateModified: modified,
   inLanguage: "zh-CN",
-  author: { "@type": "Person", name: site.author, url: homeUrl },
+  author: {
+    "@type": "Person",
+    "@id": `${homeUrl}#person`,
+    name: site.author,
+    url: homeUrl,
+    sameAs: site.social.map((item) => item.href),
+  },
   publisher: {
     "@type": "Organization",
+    "@id": `${homeUrl}#publisher`,
     name: site.name,
     url: homeUrl,
     logo: {
@@ -49,6 +54,12 @@ const articleLd = {
       width: 480,
       height: 480,
     },
+  },
+  isPartOf: {
+    "@type": "WebSite",
+    "@id": `${homeUrl}#website`,
+    name: site.name,
+    url: homeUrl,
   },
   mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
   url: pageUrl,

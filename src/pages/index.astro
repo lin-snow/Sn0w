@@ -4,6 +4,7 @@ import HomeRow from "../components/HomeRow.astro";
 import Icon from "../components/Icon.astro";
 import { site } from "../config";
 import { sitePath } from "../lib/paths";
+import { absoluteUrl } from "../lib/urls";
 import HomeIntro from "../components/HomeIntro.astro";
 
 const resolve = (href: string) =>
@@ -16,12 +17,8 @@ const urlLabel = (href?: string) => {
     : url.hostname.replace(/^www\./, "");
 };
 const social = site.social ?? [];
-const homeUrl = Astro.site
-  ? new URL(sitePath("/"), Astro.site).href
-  : sitePath("/");
-const avatarUrl = Astro.site
-  ? new URL(sitePath("avatar.png"), Astro.site).href
-  : sitePath("avatar.png");
+const homeUrl = absoluteUrl(Astro.site, "/");
+const avatarUrl = absoluteUrl(Astro.site, "avatar.png");
 const person = {
   "@type": "Person",
   "@id": `${homeUrl}#person`,
@@ -51,7 +48,11 @@ const jsonLd = {
 };
 ---
 
-<Base title={site.name} description={site.description} jsonLd={jsonLd}>
+<Base
+  title={`${site.name} — 个人主页与博客`}
+  description={site.description}
+  jsonLd={jsonLd}
+>
   <div class="home">
     <h1 class="home-title">
       <span class="home-name">I'm&nbsp;</span>

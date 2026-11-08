@@ -14,7 +14,6 @@ const currentPath = Astro.url.pathname;
   <a
     class="home-link"
     href={sitePath("/")}
-    aria-label="首页"
     aria-current={currentPath === sitePath("/") ? "page" : undefined}
   >
     <svg
@@ -102,27 +101,26 @@ const currentPath = Astro.url.pathname;
 </nav>
 
 <script>
-  document
-    .querySelectorAll<HTMLDetailsElement>(".site-menu")
-    .forEach((menu) => {
-      const summary = menu.querySelector("summary")!;
-      document.addEventListener("pointerdown", (event) => {
-        if (menu.open && !menu.contains(event.target as Node))
-          menu.open = false;
-      });
-      menu.addEventListener("keydown", (event) => {
-        if (event.key === "Escape" && menu.open) {
-          menu.open = false;
-          summary.focus();
-          event.preventDefault();
-        }
-      });
-      menu.addEventListener("keydown", (event) => {
-        if (event.key === "Tab") {
-          requestAnimationFrame(() => {
-            if (!menu.contains(document.activeElement)) menu.open = false;
-          });
-        }
-      });
+  const menu = document.querySelector<HTMLDetailsElement>(".site-menu");
+  const summary = menu?.querySelector("summary");
+
+  if (menu && summary) {
+    document.addEventListener("pointerdown", (event) => {
+      if (menu.open && !menu.contains(event.target as Node)) menu.open = false;
     });
+
+    menu.addEventListener("keydown", (event) => {
+      if (!menu.open) return;
+      if (event.key === "Escape") {
+        menu.open = false;
+        summary.focus();
+        event.preventDefault();
+      } else if (event.key === "Tab") {
+        // The browser moves focus after keydown; close once it has left.
+        requestAnimationFrame(() => {
+          if (!menu.contains(document.activeElement)) menu.open = false;
+        });
+      }
+    });
+  }
 </script>

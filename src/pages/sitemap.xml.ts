@@ -1,13 +1,14 @@
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
-import { sitePath } from "../lib/paths";
+import { absoluteUrl } from "../lib/urls";
 import { selectPublished } from "../lib/publication.mjs";
 
 export const GET: APIRoute = async ({ site }) => {
   const posts = selectPublished(await getCollection("posts"));
+  const latest = posts[0]?.data.updated ?? posts[0]?.data.date;
   const entries: { path: string; lastmod?: string }[] = [
     { path: "/" },
-    { path: "blog/" },
+    { path: "blog/", lastmod: latest },
     { path: "about/" },
     { path: "projects/" },
     ...posts.map((post) => ({
@@ -17,7 +18,7 @@ export const GET: APIRoute = async ({ site }) => {
   ];
   const urls = site
     ? entries.map(({ path, lastmod }) => {
-        const loc = new URL(sitePath(path), site).href.replace(
+        const loc = absoluteUrl(site, path).replace(
           /[&<>"']/g,
           (char) =>
             ({

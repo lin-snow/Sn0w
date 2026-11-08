@@ -4,28 +4,41 @@ import Base from "../../layouts/Base.astro";
 import { site } from "../../config";
 import { selectPublished } from "../../lib/publication.mjs";
 import { sitePath } from "../../lib/paths";
+import { absoluteUrl, currentUrl } from "../../lib/urls";
 
 const description = `${site.name} 的全部文章，按年份排列。`;
 const posts = selectPublished(await getCollection("posts"));
 const years = [...new Set(posts.map((post) => post.data.date.slice(0, 4)))];
-const blogUrl = Astro.site
-  ? new URL(Astro.url.pathname, Astro.site).href
-  : Astro.url.pathname;
-const absolute = (path: string) =>
-  Astro.site ? new URL(sitePath(path), Astro.site).href : sitePath(path);
+const blogUrl = currentUrl(Astro.site, Astro.url.pathname);
+const absolute = (path: string) => absoluteUrl(Astro.site, path);
 const blogLd = {
   "@context": "https://schema.org",
   "@type": "Blog",
+  "@id": `${blogUrl}#blog`,
   name: `${site.name} Blog`,
   url: blogUrl,
   description,
   inLanguage: "zh-CN",
-  author: { "@type": "Person", name: site.author, url: absolute("/") },
+  author: {
+    "@type": "Person",
+    "@id": `${absolute("/")}#person`,
+    name: site.author,
+    url: absolute("/"),
+    sameAs: site.social.map((item) => item.href),
+  },
+  isPartOf: {
+    "@type": "WebSite",
+    "@id": `${absolute("/")}#website`,
+    name: site.name,
+    url: absolute("/"),
+  },
   blogPost: posts.map((post) => ({
     "@type": "BlogPosting",
     headline: post.data.title,
+    description: post.data.description ?? undefined,
     url: absolute(`blog/${post.id}/`),
     datePublished: post.data.date,
+    dateModified: post.data.updated ?? post.data.date,
   })),
 };
 ---

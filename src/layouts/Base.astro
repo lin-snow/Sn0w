@@ -1,6 +1,7 @@
 ---
 import { site } from "../config";
 import { sitePath } from "../lib/paths";
+import { absoluteUrl, currentUrl } from "../lib/urls";
 import Breadcrumb from "../components/Breadcrumb.astro";
 import "../styles/global.css";
 
@@ -26,21 +27,24 @@ const {
   noindex,
   jsonLd,
 } = Astro.props;
-const documentTitle = title === site.name ? title : `${title} · ${site.name}`;
+const documentTitle = title.startsWith(site.name)
+  ? title
+  : `${title} · ${site.name}`;
 const canonical =
   Astro.site && !noindex
-    ? new URL(Astro.url.pathname, Astro.site).href
+    ? currentUrl(Astro.site, Astro.url.pathname)
     : undefined;
-const absolute = (path: string) =>
-  Astro.site ? new URL(sitePath(path), Astro.site).href : sitePath(path);
+const absolute = (path: string) => absoluteUrl(Astro.site, path);
 const ogImage = image
   ? /^https?:\/\//.test(image)
     ? image
     : absolute(image)
   : Astro.site
-    ? absolute("avatar.png")
+    ? absolute("og.png")
     : undefined;
-const ogImageAlt = image ? documentTitle : `${site.name} 的头像`;
+const ogImageAlt = image ? documentTitle : site.description;
+const markdownHref =
+  article && canonical ? `${canonical.replace(/\/$/, "")}.md` : undefined;
 const articleDate = (value: string) =>
   value.includes("T") ? value : `${value}T00:00:00.000Z`;
 const breadcrumb =
@@ -96,9 +100,22 @@ const serializeJsonLd = (value: Record<string, unknown>) =>
       title={`${site.name} RSS`}
       href={sitePath("rss.xml")}
     />
+    {markdownHref && (
+      <link
+        rel="alternate"
+        type="text/markdown"
+        title={`${documentTitle} (Markdown)`}
+        href={markdownHref}
+      />
+    )}
     <meta name="description" content={description} />
     <meta name="author" content={site.author} />
-    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="format-detection" content="telephone=no" />
+    {noindex ? (
+      <meta name="robots" content="noindex" />
+    ) : (
+      <meta name="robots" content="max-image-preview:large" />
+    )}
     <title>{documentTitle}</title>
     {canonical && <link rel="canonical" href={canonical} />}
 
@@ -141,8 +158,9 @@ const serializeJsonLd = (value: Record<string, unknown>) =>
     {ogImage && <meta property="og:image:alt" content={ogImageAlt} />}
     {ogImage && !image && (
       <>
-        <meta property="og:image:width" content="480" />
-        <meta property="og:image:height" content="480" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
       </>
     )}
     {article && published && (
@@ -157,8 +175,15 @@ const serializeJsonLd = (value: Record<string, unknown>) =>
         content={articleDate((modified ?? published)!)}
       />
     )}
-    {article && <meta property="article:author" content={site.author} />}
-    <meta name="twitter:card" content="summary" />
+    {article && (
+      <meta
+        property="article:author"
+        content={
+          site.social.find((item) => item.icon === "x")?.href ?? site.author
+        }
+      />
+    )}
+    <meta name="twitter:card" content="summary_large_image" />
     {site.twitter && <meta name="twitter:site" content={site.twitter} />}
     <meta name="twitter:title" content={documentTitle} />
     <meta name="twitter:description" content={description} />
@@ -219,7 +244,9 @@ const serializeJsonLd = (value: Record<string, unknown>) =>
         const next =
           document.documentElement.dataset.theme === "light" ? "dark" : "light";
         document.documentElement.dataset.theme = next;
-        localStorage.setItem("theme", next);
+        try {
+          localStorage.setItem("theme", next);
+        } catch {}
         syncThemeButton();
       });
     </script>
